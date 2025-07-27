@@ -61,10 +61,7 @@ class MainTabBarController: UITabBarController {
 
 class CustomTabBar: UITabBar {
     private let customHeight: CGFloat = 90
-    private let spacing: CGFloat = 70
-    private let buttonWidth: CGFloat = 32
-    private let buttonHeight: CGFloat = 32
-
+    
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         var size = super.sizeThatFits(size)
         size.height = customHeight
@@ -78,15 +75,5 @@ class CustomTabBar: UITabBar {
         newFrame.size.height = customHeight
         newFrame.origin.y = (superview?.frame.height ?? UIScreen.main.bounds.height) - customHeight
         self.frame = newFrame
-
-        let tabBarButtons = self.subviews.filter { $0 is UIControl && $0 != self }
-        let totalWidth = CGFloat(tabBarButtons.count) * buttonWidth + CGFloat(tabBarButtons.count - 1) * spacing
-        let startX = (self.bounds.width - totalWidth) / 2
-        let centerY = self.bounds.height / 2 - 12
-
-        for (index, button) in tabBarButtons.enumerated() {
-            let x = startX + CGFloat(index) * (buttonWidth + spacing)
-            button.frame = CGRect(x: x, y: centerY - buttonHeight / 2, width: buttonWidth, height: buttonHeight)
-        }
     }
 }
