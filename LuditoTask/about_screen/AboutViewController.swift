@@ -91,7 +91,7 @@ class AboutViewController: UIViewController {
         closeButton.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-16)
             make.top.equalToSuperview().offset(30)
-            make.height.width.equalTo(24)
+            make.height.width.equalTo(30)
         }
         
         subView.addSubview(titleLabel)
@@ -152,26 +152,46 @@ class AboutViewController: UIViewController {
     
     @objc func makeFavorite() {
         if let geoObject = geoObject {
-            showAddToFavoritesAlert(geoObject.name ?? "", on: self)
+            showAddToFavoritesAlert(geoObject, on: self)
         }
     }
     
-    func showAddToFavoritesAlert(_ address: String, on viewController: UIViewController) {
+    func showAddToFavoritesAlert(_ geoObject: YMKGeoObject, on viewController: UIViewController) {
         let alert = UIAlertController(
             title: "Добавить адрес в избранное",
-            message: address,
+            message: geoObject.name ?? "",
             preferredStyle: .alert
         )
         
-        let confirmAction = UIAlertAction(title: "Подтвердить", style: .default) { _ in
-            // Действие при подтверждении
-            print("Адрес добавлен в избранное: \(address)")
+        let confirmAction = UIAlertAction(title: "Подтвердить", style: .default) { [weak self] _ in
+            CoreDataManager.shared.savePlace(geoObject) { result in
+                DispatchQueue.main.async {
+                    let message: String
+                    switch result {
+                    case .success:
+                        message = "Адрес добавлен в избранное: \(geoObject.name ?? "")"
+                    case .failure(let error):
+                        switch error {
+                        case .noCoordinates:
+                            message = "Ошибка: не удалось получить координаты."
+                        case .duplicatePlace:
+                            message = "Адрес уже добавлен в избранное."
+                        case .coreDataSaveFailed(let err):
+                            message = "Ошибка при сохранении: \(err.localizedDescription)"
+                        }
+                    }
+
+                    let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self?.present(alert, animated: true, completion: nil)
+                }
+            }
         }
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .destructive, handler: nil)
         
-        alert.addAction(confirmAction)
         alert.addAction(cancelAction)
+        alert.addAction(confirmAction)
         
         viewController.present(alert, animated: true, completion: nil)
     }

@@ -76,9 +76,6 @@ class MainSearchView: UIView {
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
         let currentText = textField.text ?? ""
-        
-        searchTextField.rightView?.isHidden = currentText.isEmpty
-        
         delegate?.searchFieldChanged(currentText)
     }
     

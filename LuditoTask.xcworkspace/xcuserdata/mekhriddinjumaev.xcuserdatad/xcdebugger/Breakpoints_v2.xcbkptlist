@@ -110,8 +110,8 @@
             filePath = "LuditoTask/FavoriteScreen/FavoriteViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
             landmarkName = "FavoriteViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -145,22 +145,6 @@
             startingLineNumber = "200"
             endingLineNumber = "200"
             landmarkName = "searchForPlace(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0291A105-9E5A-4C8F-9B93-9BA4A0A5D92A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LuditoTask/map_screen/YandexMapSampleViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "viewDidDismiss(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
