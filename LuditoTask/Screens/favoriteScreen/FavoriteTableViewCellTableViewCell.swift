@@ -38,7 +38,6 @@ class FavoriteTableViewCell: UITableViewCell {
         return imageView
     }()
     
-
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initViews()
@@ -47,7 +46,7 @@ class FavoriteTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func initViews() {
         contentView.addSubview(containerView)
         containerView.snp.makeConstraints { make in
@@ -93,4 +92,3 @@ class FavoriteTableViewCell: UITableViewCell {
         addressLabel.text = place.address
     }
 }
-

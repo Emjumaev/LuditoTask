@@ -46,7 +46,9 @@ class MainTabBarController: UITabBarController {
     }
     
     private func setupTabBarControllers() {
-        let vc1 = UINavigationController(rootViewController: FavoriteViewController())
+        let vm = FavoriteViewModel()
+        let vc = FavoriteViewController(vm)
+        let vc1 = UINavigationController(rootViewController: vc)
         vc1.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "bookmark_unselected"), selectedImage: UIImage(named: "bookmark_selected"))
 
         let vc2 = UINavigationController(rootViewController: YandexMapsViewController())

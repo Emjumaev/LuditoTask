@@ -11,28 +11,28 @@ import YandexMapsMobile
 
 class AboutViewController: UIViewController {
     
-    var geoObject: YMKGeoObject?
-        
-    lazy var subView: UIView = {
+    private let viewModel: AboutViewModel
+    
+    private lazy var subView: UIView = {
         let view = UIView()
         return view
     }()
     
-    lazy var dragView: UIView = {
+    private lazy var dragView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.dragGrayColor
         view.layer.cornerRadius = 2
         return view
     }()
     
-    lazy var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Le Grande Plaza Hotel"
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         return label
     }()
     
-    lazy var addressLabel: UILabel = {
+    private lazy var addressLabel: UILabel = {
         let label = UILabel()
         label.text = "Ташкент, ул. Узбекистон Овози, 2"
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
@@ -42,14 +42,14 @@ class AboutViewController: UIViewController {
         return label
     }()
     
-    lazy var closeButton: UIButton = {
+    private lazy var closeButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "close_icon"), for: .normal)
         button.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         return button
     }()
-
-    lazy var reviewLabel: UILabel = {
+    
+    private lazy var reviewLabel: UILabel = {
         let label = UILabel()
         label.text = "517 оценок"
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -57,7 +57,7 @@ class AboutViewController: UIViewController {
         return label
     }()
     
-    lazy var makeFavoriteButton: UIButton = {
+    private lazy var makeFavoriteButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor.greenButtonColor
         button.layer.cornerRadius = 21
@@ -66,6 +66,16 @@ class AboutViewController: UIViewController {
         button.addTarget(self, action: #selector(makeFavorite), for: .touchUpInside)
         return button
     }()
+    
+    init(viewModel: AboutViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        setupViewModelBindings()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -114,14 +124,14 @@ class AboutViewController: UIViewController {
         starStackView.distribution = .equalSpacing
         
         for _ in 1...4 {
-            let startView = UIImageView(image: UIImage(named: "star_fill"))
-            startView.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-            starStackView.addArrangedSubview(startView)
+            let starView = UIImageView(image: UIImage(named: "star_fill"))
+            starView.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+            starStackView.addArrangedSubview(starView)
         }
         
-        let startView = UIImageView(image: UIImage(named: "star_unfill"))
-        startView.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-        starStackView.addArrangedSubview(startView)
+        let starView = UIImageView(image: UIImage(named: "star_unfill"))
+        starView.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+        starStackView.addArrangedSubview(starView)
         
         subView.addSubview(starStackView)
         starStackView.snp.makeConstraints { make in
@@ -146,60 +156,52 @@ class AboutViewController: UIViewController {
         }
     }
     
-    @objc func closeButtonTapped() {
+    private func setupViewModelBindings() {
+        viewModel.onUpdateUI = { [weak self] name, address, reviews in
+            guard let self = self else {
+                return
+            }
+            print("AboutViewController: Updating UI with name: \(name), address: \(address), reviews: \(reviews)")
+            self.titleLabel.text = name
+            self.addressLabel.text = address
+            self.reviewLabel.text = reviews
+        }
+        
+        viewModel.onShowConfirmationAlert = { [weak self] title, message, confirmAction in
+            guard let self = self else {
+                return
+            }
+
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let confirm = UIAlertAction(title: "Подтвердить", style: .default) { _ in confirmAction() }
+            let cancel = UIAlertAction(title: "Отмена", style: .destructive, handler: nil)
+            alert.addAction(cancel)
+            alert.addAction(confirm)
+            self.present(alert, animated: true, completion: nil)
+        }
+        
+        viewModel.onShowResultAlert = { [weak self] message in
+            guard let self = self else {
+                return
+            }
+
+            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @objc private func closeButtonTapped() {
         self.dismiss(animated: true)
     }
     
-    @objc func makeFavorite() {
-        if let geoObject = geoObject {
-            showAddToFavoritesAlert(geoObject, on: self)
-        }
-    }
-    
-    func showAddToFavoritesAlert(_ geoObject: YMKGeoObject, on viewController: UIViewController) {
-        let alert = UIAlertController(
-            title: "Добавить адрес в избранное",
-            message: geoObject.name ?? "",
-            preferredStyle: .alert
-        )
-        
-        let confirmAction = UIAlertAction(title: "Подтвердить", style: .default) { [weak self] _ in
-            CoreDataManager.shared.savePlace(geoObject) { result in
-                DispatchQueue.main.async {
-                    let message: String
-                    switch result {
-                    case .success:
-                        message = "Адрес добавлен в избранное: \(geoObject.name ?? "")"
-                    case .failure(let error):
-                        switch error {
-                        case .noCoordinates:
-                            message = "Ошибка: не удалось получить координаты."
-                        case .duplicatePlace:
-                            message = "Адрес уже добавлен в избранное."
-                        case .coreDataSaveFailed(let err):
-                            message = "Ошибка при сохранении: \(err.localizedDescription)"
-                        }
-                    }
-
-                    let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self?.present(alert, animated: true, completion: nil)
-                }
-            }
-        }
-        
-        let cancelAction = UIAlertAction(title: "Отмена", style: .destructive, handler: nil)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(confirmAction)
-        
-        viewController.present(alert, animated: true, completion: nil)
+    @objc private func makeFavorite() {
+        viewModel.makeFavorite()
     }
     
     func setGeoObject(_ geoObject: YMKGeoObject) {
-        self.geoObject = geoObject
-        titleLabel.text = geoObject.name
-        addressLabel.text = geoObject.descriptionText
+        viewModel.setGeoObject(geoObject)
     }
 }
 

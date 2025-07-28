@@ -102,7 +102,8 @@ final class YandexMapsViewController: UIViewController {
         
         viewModel.onShowAboutVC = { [weak self] geoObject in
             guard let self = self else { return }
-            let vc = AboutViewController()
+            let vm = AboutViewModel()
+            let vc = AboutViewController(viewModel: vm)
             vc.setGeoObject(geoObject)
             self.navigationController?.presentPanModal(vc)
         }
