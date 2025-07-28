@@ -28,14 +28,12 @@ class SearchPageTableViewCell: UITableViewCell {
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Le Grande Plaza Hotel"
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         return label
     }()
     
     lazy var addressLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ташкент, ул. Узбекистон Овози, 2"
         label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         label.textColor = UIColor.addressTitleColor
         return label
@@ -43,7 +41,6 @@ class SearchPageTableViewCell: UITableViewCell {
     
     lazy var distanceLavel: UILabel = {
         let label = UILabel()
-        label.text = "36 м"
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textAlignment = .right
         return label
@@ -56,6 +53,21 @@ class SearchPageTableViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(with searchResult: SearchResult) {
+        titleLabel.text = searchResult.name
+        addressLabel.text = searchResult.address
+        if let distance = searchResult.distance {
+            if distance >= 1000 {
+                let distanceInKm = distance / 1000
+                distanceLavel.text = String(format: "%.1f km", distanceInKm)
+            } else {
+                distanceLavel.text = String(format: "%.0f m", distance)
+            }
+        } else {
+            distanceLavel.text = "-"
+        }
     }
     
     private func initViews() {
@@ -102,5 +114,4 @@ class SearchPageTableViewCell: UITableViewCell {
             make.bottom.equalToSuperview()
         }
     }
-    
 }

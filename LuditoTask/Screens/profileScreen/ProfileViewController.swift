@@ -45,5 +45,4 @@ class ProfileViewController: UIViewController {
             make.centerY.equalToSuperview()
         }
     }
-
 }

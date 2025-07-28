@@ -49,7 +49,7 @@ class MainTabBarController: UITabBarController {
         let vc1 = UINavigationController(rootViewController: FavoriteViewController())
         vc1.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "bookmark_unselected"), selectedImage: UIImage(named: "bookmark_selected"))
 
-        let vc2 = UINavigationController(rootViewController: YandexMapSampleViewController())
+        let vc2 = UINavigationController(rootViewController: YandexMapsViewController())
         vc2.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "map_unselected"), selectedImage: UIImage(named: "map_unselected"))
 
         let vc3 = UINavigationController(rootViewController: ProfileViewController())

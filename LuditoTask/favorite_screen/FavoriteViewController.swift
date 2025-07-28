@@ -11,6 +11,16 @@ class FavoriteViewController: UIViewController {
     
     private var places: [SavedPlace] = []
     
+    lazy var messageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "В избранном ничего нет."
+        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.textColor = .addressTitleColor
+        label.textAlignment = .center
+        return label
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
@@ -21,7 +31,6 @@ class FavoriteViewController: UIViewController {
         return tableView
     }()
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         let titleLabel = UILabel()
@@ -33,6 +42,13 @@ class FavoriteViewController: UIViewController {
         
         self.navigationItem.titleView = titleLabel
         
+        view.addSubview(messageLabel)
+        messageLabel.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(16)
+            make.right.equalToSuperview().offset(-16)
+            make.centerY.equalToSuperview()
+        }
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -42,6 +58,7 @@ class FavoriteViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchSavedPlaces()
+        tableView.isHidden = places.isEmpty
         tableView.reloadData()
     }
 
@@ -69,9 +86,8 @@ extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource {
          if editingStyle == .delete {
              let placeToDelete = places[indexPath.row]
              CoreDataManager.shared.deletePlace(placeToDelete)
-
              places.remove(at: indexPath.row)
-
+             tableView.isHidden = places.isEmpty
              tableView.deleteRows(at: [indexPath], with: .automatic)
          }
      }
