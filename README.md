@@ -2,6 +2,9 @@
 
 This project is a test assignment for **Ludito**, implementing a map-based address book feature using **Yandex Maps**. The goal is to replicate behavior similar to **Yandex GO**, including a center pin, address search, and local storage.
 
+🎥 [Watch Demo Video](https://drive.google.com/file/d/1_K7bwpOH9VkzT4wFKRNTmJY4DOlm83zK/view?usp=sharing)
+
+
 ## ✅ Features
 
 - 🗺️ **Yandex Maps Integration**  
@@ -38,6 +41,7 @@ This project is a test assignment for **Ludito**, implementing a map-based addre
    ```bash
    git clone https://github.com/yourusername/ludito-map-test.git
    cd ludito-map-test
+   pod install
 
 2. Open the workspace file:
     ```bash
